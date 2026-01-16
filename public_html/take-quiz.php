@@ -12,6 +12,15 @@ foreach($all_quizzes as $q) { if($q['id'] == $id) $quiz = $q; }
 
 if(!$quiz) die("Quiz not found");
 
+// Verify Purchase - prevent direct URL access
+$user_id = $_SESSION['user_id'];
+$stmt_purchase = $pdo->prepare("SELECT * FROM purchases WHERE user_id = ? AND quiz_id = ? AND access_status = 'active'");
+$stmt_purchase->execute([$user_id, $id]);
+if ($stmt_purchase->rowCount() == 0) {
+    echo "<script>alert('Please purchase this quiz first to access it.'); window.location.href='quiz-details.php?id=$id';</script>";
+    exit;
+}
+
 // Fetch Questions (Mock: Return all for demo, usually filtered by quiz_id)
 $questions = $pdo->prepare("SELECT * FROM quiz_questions")->fetchAll();
 ?>

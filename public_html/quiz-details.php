@@ -13,6 +13,14 @@ foreach($all_quizzes as $q) { if($q['id'] == $id) $quiz = $q; }
 
 if (!$quiz) { echo "Quiz not found."; exit; }
 
+// Check if user has purchased this quiz
+$has_purchased = false;
+if (isset($_SESSION['user_id'])) {
+    $stmt_purchase = $pdo->prepare("SELECT * FROM purchases WHERE user_id = ? AND quiz_id = ? AND access_status = 'active'");
+    $stmt_purchase->execute([$_SESSION['user_id'], $id]);
+    $has_purchased = $stmt_purchase->rowCount() > 0;
+}
+
 $pageTitle = $quiz['title'];
 require_once 'includes/header.php';
 ?>
@@ -36,11 +44,17 @@ require_once 'includes/header.php';
                  <h3 style="margin-bottom: 20px;">Price: <span style="color: var(--secondary);">₹<?php echo $quiz['price']; ?></span></h3>
                  
                  <?php if(isset($_SESSION['user_id'])): ?>
-                    <!-- Demo: Direct Link to 'Take Quiz' assuming simulation of purchase -->
-                    <a href="take-quiz.php?id=<?php echo $quiz['id']; ?>" class="btn btn-primary" style="padding: 15px 40px;">Start Quiz (Demo)</a>
+                    <?php if ($has_purchased): ?>
+                        <!-- User has purchased - allow access -->
+                        <a href="take-quiz.php?id=<?php echo $quiz['id']; ?>" class="btn btn-primary" style="padding: 15px 40px;">Start Quiz</a>
                     <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light);">(In real version, this goes to Payment first)</p>
+                    <?php else: ?>
+                        <!-- User has NOT purchased - show buy button -->
+                        <a href="payments/checkout-quiz.php?quiz_id=<?php echo $quiz['id']; ?>" class="btn btn-primary" style="padding: 15px 40px;">Buy Now - ₹<?php echo $quiz['price']; ?></a>
+                        <p style="margin-top: 15px; color: var(--text-light); font-size: 0.9rem;"><i class="fa-solid fa-lock"></i> Purchase required to access this quiz</p>
+                    <?php endif; ?>
                  <?php else: ?>
-                    <a href="login.php" class="btn btn-primary">Login to Purchase</a>
+                    <a href="login.php?redirect=quiz-details.php?id=<?php echo $quiz['id']; ?>" class="btn btn-secondary" style="padding: 15px 40px;">Login to Buy</a>
                  <?php endif; ?>
             </div>
             <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: 12px; min-height: 300px;">
