@@ -154,7 +154,6 @@ $modules = $stmt->fetchAll();
                             Open <i class="fa-solid fa-arrow-right"></i>
                         </a>
                         
-                        <button class="btn btn-secondary edit-chapter-btn" data-chapter-id="<?php echo $m['id']; ?>" data-current-name="<?php echo htmlspecialchars($m['title']); ?>" style="color: #64748b;" title="Edit Name"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn btn-secondary edit-chapter-btn" data-chapter-id="<?php echo $mod['id']; ?>" data-current-name="<?php echo htmlspecialchars($mod['title']); ?>" style="color: #64748b;" title="Edit Name"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn btn-secondary" style="color: #ef4444; background: #fef2f2;" title="Delete" onclick="return confirm('WARNING: This will delete ALL videos, files, and tests inside this chapter. Continue?');"><i class="fa-solid fa-trash"></i></button>
                     </div>
