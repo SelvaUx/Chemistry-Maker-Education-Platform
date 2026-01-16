@@ -90,7 +90,7 @@ $quizzes = $pdo->prepare("SELECT * FROM quizzes ORDER BY created_at DESC")->fetc
                         <?php endif; ?>
                     </td>
                     <td>
-                        <select onchange="alert('Status updated to: ' + this.value)" style="padding: 6px 10px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.85rem; font-weight: 600; cursor: pointer; background: white;">
+                        <select class="quiz-status-dropdown" data-quiz-id="<?php echo $q['id']; ?>" style="padding: 6px 10px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.85rem; font-weight: 600; cursor: pointer; background: white;">
                             <option value="published" <?php echo ($q['status']??'') == 'published' ? 'selected' : ''; ?>>🟢 Published</option>
                             <option value="draft" <?php echo ($q['status']??'') == 'draft' ? 'selected' : ''; ?>>🟡 Draft</option>
                             <option value="archived" <?php echo ($q['status']??'') == 'archived' ? 'selected' : ''; ?>>🔒 Closed</option>
@@ -118,8 +118,54 @@ $quizzes = $pdo->prepare("SELECT * FROM quizzes ORDER BY created_at DESC")->fetc
         </table>
     </div>
 
+    </div>
 </div>
 </div>
-</div>
+
+<script>
+// Quiz Status Dropdown Handler
+document.querySelectorAll('.quiz-status-dropdown').forEach(dropdown => {
+    dropdown.addEventListener('change', function() {
+        const quizId = this.getAttribute('data-quiz-id');
+        const newStatus = this.value;
+        const originalValue = this.querySelector('option[selected]')?.value || this.value;
+        
+        // Show loading state
+        this.disabled = true;
+        this.style.opacity = '0.6';
+        
+        // Send AJAX request
+        fetch('api/update-quiz-status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `quiz_id=${quizId}&status=${newStatus}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.disabled = false;
+            this.style.opacity = '1';
+            
+            if (data.success) {
+                // Show success toast (you can enhance this with a better notification)
+                const toast = document.createElement('div');
+                toast.textContent = '✓ Status updated';
+                toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#00b894;color:white;padding:12px 20px;border-radius:8px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            } else {
+                alert('Error: ' + data.message);
+                this.value = originalValue; // Revert on error
+            }
+        })
+        .catch(error => {
+            this.disabled = false;
+            this.style.opacity = '1';
+            alert('Network error occurred');
+            this.value = originalValue; // Revert on error
+        });
+    });
+});
+</script>
+
 </body>
 </html>

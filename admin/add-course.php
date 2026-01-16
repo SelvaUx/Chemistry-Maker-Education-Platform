@@ -12,6 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = trim($_POST['description']);
     $price = $_POST['price'];
     $status = $_POST['status'];
+    $instructor_name = trim($_POST['instructor_name'] ?? 'Chemistry Maker');
+    $instructor_bio = trim($_POST['instructor_bio'] ?? '');
+    $learning_outcomes = array_filter(explode("\n", $_POST['learning_outcomes'] ?? ''));
+    $language = $_POST['language'] ?? 'English';
     
     // Slug generation
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
@@ -23,6 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ext = strtolower(pathinfo($_FILES['thumbnail']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, $allowed)) {
             $thumbnail_name = uniqid() . '.' . $ext;
+            // Ensure directory exists
+            if (!is_dir('../public_html/uploads/thumbnails/')) {
+                mkdir('../public_html/uploads/thumbnails/', 0777, true);
+            }
             move_uploaded_file($_FILES['thumbnail']['tmp_name'], '../public_html/uploads/thumbnails/' . $thumbnail_name);
         } else {
             $error = "Invalid image format.";
@@ -31,8 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if (empty($error)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO courses (title, slug, description, price, status, thumbnail, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $slug, $description, $price, $status, $thumbnail_name]);
+            // Note: In real DB, you'd store instructor and outcomes in separate tables or JSON
+            $stmt = $pdo->prepare("INSERT INTO courses (title, slug, description, price, status, thumbnail, instructor_name, instructor_bio, language, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $slug, $description, $price, $status, $thumbnail_name, $instructor_name, $instructor_bio, $language]);
             $new_id = $pdo->lastInsertId();
              // Since mock DB doesn't really return lastInsertId often in this setup, fallback to redirect
             echo "<script>window.location.href='manage-course.php?id=1';</script>"; // Redirect to Manage Content (Mock ID 1)
@@ -83,7 +92,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                           style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; background: var(--bg-input); line-height: 1.5;"></textarea>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+            <!-- Learning Outcomes -->
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">What You'll Learn</label>
+                <textarea name="learning_outcomes" rows="6" placeholder="Enter each outcome on a new line:\n• Master Organic Chemistry concepts\n• Solve complex reactions\n• Ace JEE/NEET exams"
+                          style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; background: var(--bg-input); line-height: 1.5;"></textarea>
+                <small style="color: #888;">Each line will be displayed as a bullet point on the course page.</small>
+            </div>
+            
+            <!-- Instructor Info -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 25px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Instructor Name</label>
+                    <input type="text" name="instructor_name" value="Chemistry Maker" placeholder="Dr. John Doe"
+                           style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: var(--bg-input);">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Instructor Bio</label>
+                    <input type="text" name="instructor_bio" placeholder="PhD in Chemistry with 15+ years of teaching experience"
+                           style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: var(--bg-input);">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px;">
                 <div>
                     <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Price (₹) <span style="color: red;">*</span></label>
                     <div style="position: relative;">
@@ -101,6 +132,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="published">🟢 Published (Visible)</option>
                      </select>
                      <small style="color: #666;">Drafts are not visible to students.</small>
+                </div>
+                
+                <div>
+                     <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Language</label>
+                     <select name="language" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; background: white;">
+                        <option value="English">English</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="Bilingual">English + Hindi</option>
+                     </select>
                 </div>
             </div>
             

@@ -204,8 +204,9 @@ try {
                     
                     <!-- Ask Form -->
                     <div style="margin-bottom: 30px; background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px;">
-                        <textarea placeholder="Ask a question about this video..." style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; margin-bottom: 10px; min-height: 80px;"></textarea>
-                        <button class="btn btn-primary" onclick="alert('Doubt submitted for review! (Demo)')">Post Question</button>
+                        <textarea id="doubt-question" placeholder="Ask a question about this video..." style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; margin-bottom: 10px; min-height: 80px;"></textarea>
+                        <button id="submit-doubt-btn" class="btn btn-primary">Post Question</button>
+                        <span id="doubt-status" style="margin-left: 15px; color: #00b894; display: none;"></span>
                     </div>
                     
                     <!-- List -->
@@ -312,5 +313,55 @@ try {
     }
 </script>
 
+<script>
+// Doubt Submission Handler
+document.getElementById('submit-doubt-btn')?.addEventListener('click', function() {
+    const textarea = document.getElementById('doubt-question');
+    const statusSpan = document.getElementById('doubt-status');
+    const button = this;
+    const question = textarea.value.trim();
+    
+    if (!question) {
+        alert('Please enter a question');
+        return;
+    }
+    
+    // Show loading state
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+    statusSpan.style.display = 'none';
+    
+    // Send AJAX request
+    fetch('api/submit-doubt.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `video_id=<?php echo $current_video['id']; ?>&course_id=<?php echo $course_id; ?>&question=${encodeURIComponent(question)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.disabled = false;
+        button.textContent = 'Post Question';
+        
+        if (data.success) {
+            textarea.value = ''; // Clear form
+            statusSpan.textContent = '✓ ' + data.message;
+            statusSpan.style.display = 'inline';
+            setTimeout(() => statusSpan.style.display = 'none', 5000);
+            
+            // Optionally refresh page to show new doubt
+            setTimeout(() => window.location.reload(), 3000);
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        button.disabled = false;
+        button.textContent = 'Post Question';
+        alert('Network error occurred. Please try again.');
+    });
+});
+</script>
+
 </body>
 </html>
+```

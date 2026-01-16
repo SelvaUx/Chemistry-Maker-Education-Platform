@@ -110,6 +110,9 @@ require_once __DIR__ . '/admin-auth.php';
             <a href="users.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-users"></i> Students
             </a>
+            <a href="doubts.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'doubts.php' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-comments"></i> Doubts
+            </a>
             <a href="payments.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'payments.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-money-bill"></i> Payments
             </a>

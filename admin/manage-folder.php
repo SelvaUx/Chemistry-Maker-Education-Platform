@@ -82,7 +82,7 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
     <!-- TAB CONTENT -->
     <?php if($tab == 'videos'): ?>
         <div style="text-align: right; margin-bottom: 20px;">
-            <a href="add-video.php?folder_id=<?php echo $folder_id; ?>" class="btn btn-primary" onclick="alert('Proceed to Add Video Page'); return false;">
+            <a href="add-video.php?folder_id=<?php echo $folder_id; ?>&course_id=<?php echo $course_id; ?>" class="btn btn-primary">
                 <i class="fa-solid fa-plus"></i> Add New Video
             </a>
         </div>
@@ -97,15 +97,18 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
                 <div class="content-item">
                     <div class="flex align-center gap-2">
                         <div style="color: #ccc; font-weight: bold; width: 20px;"><?php echo $index+1; ?></div>
-                        <img src="../assets/images/thumbnail.jpg" style="width: 50px; height: 30px; object-fit: cover; border-radius: 4px; opacity: 0.8;">
+                        <!-- Fixed Thumbnail -->
+                        <div style="width: 50px; height: 30px; background: #f0f2f5; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                            <i class="fa-solid fa-play" style="color: var(--primary); font-size: 0.8rem;"></i>
+                        </div>
                         <div>
                              <div style="font-weight: 600; font-size: 1rem; color: #333;"><?php echo htmlspecialchars($v['title']); ?></div>
-                             <div style="font-size: 0.8rem; color: #888;">10:25 • Added Today</div>
+                             <div style="font-size: 0.8rem; color: #888;"><?php echo $v['duration']; ?> • <?php echo $v['is_free'] ? '<span style="color: green;">Free Preview</span>' : 'Locked'; ?></div>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                         <button class="btn btn-secondary" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                         <button class="btn btn-secondary" style="color: #d63031; background: #ffecec;" title="Delete" onclick="confirm('Delete video?');"><i class="fa-solid fa-trash"></i></button>
+                         <a href="edit-video.php?id=<?php echo $v['id']; ?>" class="btn btn-secondary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                         <button class="btn btn-secondary delete-video-btn" data-video-id="<?php echo $v['id']; ?>" style="color: #d63031; background: #ffecec;" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -113,7 +116,7 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
 
     <?php elseif($tab == 'notes'): ?>
         <div style="text-align: right; margin-bottom: 20px;">
-            <button class="btn btn-primary" onclick="alert('Upload PDF Modal');"><i class="fa-solid fa-cloud-arrow-up"></i> Upload PDF / Note</button>
+            <a href="add-resource.php?folder_id=<?php echo $folder_id; ?>" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload PDF / Note</a>
         </div>
         <?php if(empty($resources)): ?>
              <div style="text-align: center; padding: 40px; color: #ccc;">
@@ -131,8 +134,8 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
                         </div>
                     </div>
                     <div class="flex gap-2">
-                         <a href="#" class="btn btn-secondary" title="View"><i class="fa-regular fa-eye"></i></a>
-                         <button class="btn btn-secondary" style="color: #d63031; background: #ffecec;" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                         <a href="../uploads/resources/<?php echo $r['file_path']; ?>" target="_blank" class="btn btn-secondary" title="View PDF"><i class="fa-regular fa-eye"></i></a>
+                         <button class="btn btn-secondary delete-resource-btn" data-resource-id="<?php echo $r['id']; ?>" style="color: #d63031; background: #ffecec;" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -140,7 +143,7 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
 
     <?php elseif($tab == 'tests'): ?>
         <div style="text-align: right; margin-bottom: 20px;">
-            <button class="btn btn-primary" onclick="alert('Create Test Modal');"><i class="fa-solid fa-plus"></i> Create Chapter Test</button>
+             <a href="add-test.php?folder_id=<?php echo $folder_id; ?>" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Chapter Test</a>
         </div>
         <?php if(empty($tests)): ?>
              <div style="text-align: center; padding: 40px; color: #ccc;">
@@ -159,7 +162,7 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
                     </div>
                     <div class="flex gap-2">
                          <a href="<?php echo $t['form_url']; ?>" target="_blank" class="btn btn-secondary" title="Open Link"><i class="fa-solid fa-up-right-from-square"></i></a>
-                         <button class="btn btn-secondary" style="color: #d63031; background: #ffecec;" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                         <button class="btn btn-secondary delete-test-btn" data-test-id="<?php echo $t['id']; ?>" style="color: #d63031; background: #ffecec;" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -171,5 +174,79 @@ foreach($all_tests as $t) { if(isset($t['module_id']) && $t['module_id'] == $fol
 
 </div>
 </div>
+
+<script>
+// Delete Handlers
+const currentFolderId = <?php echo $folder_id; ?>;
+const currentCourseId = <?php echo $course_id; ?>;
+const currentTab = '<?php echo $tab; ?>';
+
+// Generic delete function
+function handleDelete(type, id, endpoint) {
+    if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
+        return;
+    }
+    
+    const button = event.target.closest('button');
+    button.disabled = true;
+    button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    
+    fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `${type}_id=${id}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success and reload
+            const toast = document.createElement('div');
+            toast.textContent = '✓ Deleted successfully';
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#00b894;color:white;padding:12px 20px;border-radius:8px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                window.location.href = `manage-folder.php?folder_id=${currentFolderId}&course_id=${currentCourseId}&tab=${currentTab}`;
+            }, 1000);
+        } else {
+            alert('Error: ' + data.message);
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        }
+    })
+    .catch(error => {
+        alert('Network error occurred');
+        button.disabled = false;
+        button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    });
+}
+
+// Video deletion
+document.querySelectorAll('.delete-video-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        event = e;
+        const videoId = this.getAttribute('data-video-id');
+        handleDelete('video', videoId, 'api/delete-video.php');
+    });
+});
+
+// Resource deletion
+document.querySelectorAll('.delete-resource-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        event = e;
+        const resourceId = this.getAttribute('data-resource-id');
+        handleDelete('resource', resourceId, 'api/delete-resource.php');
+    });
+});
+
+// Test deletion
+document.querySelectorAll('.delete-test-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        event = e;
+        const testId = this.getAttribute('data-test-id');
+        handleDelete('test', testId, 'api/delete-test.php');
+    });
+});
+</script>
+
 </body>
 </html>

@@ -18,8 +18,25 @@ $course = $stmt->fetch();
 // Add Chapter Logic
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_title'])) {
     $title = trim($_POST['folder_title']);
-    // In Mock Mode...
-    echo "<script>alert('Chapter Added (Demo)');</script>";
+    if (!empty($title)) {
+        try {
+            // Get max position
+            $stmt = $pdo->prepare("SELECT MAX(position) as max_pos FROM modules WHERE course_id = ?");
+            $stmt->execute([$course_id]);
+            $result = $stmt->fetch();
+            $next_position = ($result['max_pos'] ?? 0) + 1;
+            
+            // Insert new module/chapter
+            $stmt = $pdo->prepare("INSERT INTO modules (course_id, title, position) VALUES (?, ?, ?)");
+            $stmt->execute([$course_id, $title, $next_position]);
+            
+            // Redirect to refresh page
+            echo "<script>window.location.href='manage-course.php?id=$course_id';</script>";
+            exit;
+        } catch (PDOException $e) {
+            $error_msg = "Error adding chapter: " . $e->getMessage();
+        }
+    }
 }
 
 // Fetch Modules

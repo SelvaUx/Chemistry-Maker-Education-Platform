@@ -13,28 +13,46 @@ foreach($all_courses as $c) { if($c['id'] == $id) $course = $c; }
 if(!$course) { echo "Course not found."; exit; }
 
 // Handle Post (Mock Update)
+    // Handle Post (Mock Update)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
-    // In a real app, we would update the database here.
-    // $stmt = $pdo->prepare("UPDATE courses SET title = ? ... WHERE id = ?");
-    // $stmt->execute([...]);
     
+    // Thumbnail Upload
+    $thumbnail_name = $course['thumbnail']; // Default to existing
+    if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == 0) {
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        $ext = strtolower(pathinfo($_FILES['thumbnail']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, $allowed)) {
+            $thumbnail_name = uniqid() . '.' . $ext;
+            if (!is_dir('../public_html/uploads/thumbnails/')) {
+                 mkdir('../public_html/uploads/thumbnails/', 0777, true);
+            }
+            move_uploaded_file($_FILES['thumbnail']['tmp_name'], '../public_html/uploads/thumbnails/' . $thumbnail_name);
+        }
+    }
+
     echo "<div class='alert alert-success'>Course updated successfully! (Demo Mode)</div>";
     
     // Update local variable for display
     $course['title'] = $title;
+    $course['thumbnail'] = $thumbnail_name;
     $course['description'] = $_POST['description'];
     $course['price'] = $_POST['price'];
     $course['learning_outcomes'] = array_filter(explode("\n", $_POST['learning_outcomes']));
+    $course['instructor'] = [
+        'name' => $_POST['instructor_name'] ?? 'Chemistry Maker',
+        'bio' => $_POST['instructor_bio'] ?? ''
+    ];
+    $course['language'] = $_POST['language'] ?? 'English';
     $course['features'] = [
         'duration' => $_POST['duration'],
-        'access' => $_POST['access'],
-        'certificate' => 'Certificate of Completion'
+        'access' => $_POST['access']
     ];
 }
 ?>
 
 <div style="max-width: 900px; margin: 0 auto;">
+    <!-- ... header ... -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <h2 style="margin: 0;">Edit Course</h2>
         <a href="courses.php" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</a>
@@ -47,11 +65,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <div class="stat-card" style="padding: 40px; border-radius: 12px; box-shadow: var(--shadow-md);">
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <!-- Basic Info Section -->
             <h4 style="margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">Basic Information</h4>
             
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 25px;">
+                <!-- Thumbnail Preview & Upload -->
+                <div style="grid-column: 1 / -1; margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Course Thumbnail</label>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div style="width: 160px; height: 90px; background: #eee; border-radius: 8px; overflow: hidden; border: 1px solid #ddd;">
+                            <?php if(!empty($course['thumbnail']) && file_exists('../public_html/uploads/thumbnails/'.$course['thumbnail'])): ?>
+                                <img src="../public_html/uploads/thumbnails/<?php echo $course['thumbnail']; ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                            <?php else: ?>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #aaa;">No Image</div>
+                            <?php endif; ?>
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" name="thumbnail" accept="image/*" style="padding: 10px; border: 1px solid #ddd; width: 100%; border-radius: 6px;">
+                            <small style="color: #888;">Upload to replace current image. Recommended: 800x450px.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Title & Price (Moved into PHP block replacement target to keep context valid) -->
                 <div>
                     <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Course Title</label>
                     <input type="text" name="title" value="<?php echo htmlspecialchars($course['title']); ?>" required 
@@ -108,8 +145,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Instructor Name</label>
-                        <input type="text" name="instructor_name" value="<?php echo $course['instructor']['name'] ?? ''; ?>"
+                        <input type="text" name="instructor_name" value="<?php echo $course['instructor']['name'] ?? 'Chemistry Maker'; ?>"
                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: var(--bg-input);">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Instructor Bio</label>
+                        <input type="text" name="instructor_bio" value="<?php echo $course['instructor']['bio'] ?? ''; ?>" placeholder="Brief instructor bio"
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: var(--bg-input);">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main);">Language</label>
+                        <select name="language" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: var(--bg-input);">
+                            <option value="English" <?php echo ($course['language'] ?? 'English') == 'English' ? 'selected' : ''; ?>>English</option>
+                            <option value="Hindi" <?php echo ($course['language'] ?? '') == 'Hindi' ? 'selected' : ''; ?>>Hindi</option>
+                            <option value="Bilingual" <?php echo ($course['language'] ?? '') == 'Bilingual' ? 'selected' : ''; ?>>English + Hindi</option>
+                        </select>
                     </div>
                 </div>
             </div>

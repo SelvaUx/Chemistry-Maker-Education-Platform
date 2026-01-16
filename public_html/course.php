@@ -24,6 +24,11 @@ try {
     $stmt_vid = $pdo->prepare("SELECT title, duration, is_free FROM videos WHERE course_id = ? ORDER BY position ASC");
     $stmt_vid->execute([$course_id]);
     $videos = $stmt_vid->fetchAll();
+    
+    // Get actual enrollment count
+    $stmt_enroll = $pdo->prepare("SELECT COUNT(*) as count FROM purchases WHERE course_id = ?");
+    $stmt_enroll->execute([$course_id]);
+    $enrollment_count = $stmt_enroll->fetchColumn() ?: 0;
 
 } catch (PDOException $e) {
     die("Error fetching course information.");
@@ -52,8 +57,8 @@ require_once 'includes/header.php';
                     <i class="fa-solid fa-star-half-stroke" style="color: #f1c40f;"></i>
                  </div>
                  <span style="opacity: 0.7;">(245 ratings)</span>
-                 <span style="opacity: 0.7;">1,200 students enrolled</span>
-                 <span style="opacity: 0.7;"><i class="fa-solid fa-language"></i> English</span>
+                 <span style="opacity: 0.7;"><?php echo number_format($enrollment_count); ?> students enrolled</span>
+                 <span style="opacity: 0.7;"><i class="fa-solid fa-language"></i> <?php echo $course['language'] ?? 'English'; ?></span>
             </div>
             
             <div style="font-size: 0.9rem; opacity: 0.8;">
@@ -214,7 +219,7 @@ require_once 'includes/header.php';
                             <!-- Fallbacks -->
                             <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center; color: var(--text-light);"><i class="fa-solid fa-video text-primary" style="width: 20px;"></i> 40 hours on-demand video</li>
                             <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center; color: var(--text-light);"><i class="fa-solid fa-mobile-screen text-primary" style="width: 20px;"></i> Access on Mobile & TV</li>
-                            <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center; color: var(--text-light);"><i class="fa-solid fa-trophy text-primary" style="width: 20px;"></i> Certificate of Completion</li>
+                            <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center; color: var(--text-light);"><i class="fa-solid fa-infinity text-primary" style="width: 20px;"></i> <?php echo $value; ?></li>
                         <?php endif; ?>
                     </ul>
                     
