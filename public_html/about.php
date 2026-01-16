@@ -8,7 +8,7 @@ require_once 'includes/header.php';
 ?>
 
 <!-- Hero Section -->
-<section style="background: linear-gradient(135deg, var(--bg-dark), #1a1a2e); color: white; padding: 100px 0 80px; text-align: center; position: relative; overflow: hidden;">
+<section style="background: linear-gradient(135deg, #0f172a, #1a1a2e); color: white; padding: 100px 0 80px; text-align: center; position: relative; overflow: hidden;">
     <!-- Background Elements -->
     <div style="position: absolute; top: -50px; left: -50px; width: 300px; height: 300px; background: var(--primary); opacity: 0.1; filter: blur(80px); border-radius: 50%;"></div>
     <div style="position: absolute; bottom: -50px; right: -50px; width: 400px; height: 400px; background: var(--secondary); opacity: 0.1; filter: blur(100px); border-radius: 50%;"></div>
