@@ -154,7 +154,8 @@ $modules = $stmt->fetchAll();
                             Open <i class="fa-solid fa-arrow-right"></i>
                         </a>
                         
-                        <button class="btn btn-secondary" style="color: #64748b;" title="Edit Name"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary edit-chapter-btn" data-chapter-id="<?php echo $m['id']; ?>" data-current-name="<?php echo htmlspecialchars($m['title']); ?>" style="color: #64748b;" title="Edit Name"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary edit-chapter-btn" data-chapter-id="<?php echo $mod['id']; ?>" data-current-name="<?php echo htmlspecialchars($mod['title']); ?>" style="color: #64748b;" title="Edit Name"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn btn-secondary" style="color: #ef4444; background: #fef2f2;" title="Delete" onclick="return confirm('WARNING: This will delete ALL videos, files, and tests inside this chapter. Continue?');"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -165,6 +166,51 @@ $modules = $stmt->fetchAll();
 </div>
 </div>
 </div>
+
+<script>
+// Chapter Edit Handler
+document.querySelectorAll('.edit-chapter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const chapterId = this.getAttribute('data-chapter-id');
+        const currentName = this.getAttribute('data-current-name');
+        
+        const newName = prompt('Edit Chapter Name:', currentName);
+        
+        if (newName && newName.trim() !== '' && newName.trim() !== currentName) {
+            // Show loading state
+            this.disabled = true;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // Send AJAX request
+            fetch('api/update-chapter.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `chapter_id=${chapterId}&title=${encodeURIComponent(newName.trim())}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success and reload
+                    const toast = document.createElement('div');
+                    toast.textContent = '✓ Chapter renamed';
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#00b894;color:white;padding:12px 20px;border-radius:8px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
+                    document.body.appendChild(toast);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    alert('Error: ' + data.message);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                }
+            })
+            .catch(error => {
+                alert('Network error occurred');
+                this.disabled = false;
+                this.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            });
+        }
+    });
+});
+</script>
 
 <style>
 /* Toggle Switch */
