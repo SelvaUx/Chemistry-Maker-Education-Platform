@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Maker - Demo</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <a href="index.html" class="logo">
+            <i class="fa-solid fa-flask"></i> Chemistry Maker
+        </a>
+        <nav>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="courses.html" class="nav-link">Courses</a></li>
+                <li><a href="test-series.html" class="nav-link">Test Series</a></li>
+                
+                <!-- Guest View -->
+                <li class="guest-only" style="margin-left: 10px;">
+                    <a href="login.html" class="btn btn-secondary" style="padding: 8px 20px; border: 1px solid var(--primary);">Login</a>
+                </li>
+                <li class="guest-only">
+                    <a href="login.html" class="btn btn-primary" style="padding: 10px 25px; font-size: 0.9rem;">Get Started Free</a>
+                </li>
+                
+                <!-- Logged In View -->
+                <li class="auth-only" style="display: none;">
+                    <a href="dashboard.html" class="btn btn-primary" style="padding: 8px 20px;">Dashboard</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Master Chemistry with <span class="text-primary">Expert Guidance</span></h1>
+            <p>Premium video courses, comprehensive study materials, and rigorous test series designed for JEE, NEET, and Board Exam success.</p>
+            <div class="hero-buttons">
+                <a href="courses.html" class="btn btn-primary btn-lg">Explore Courses <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="test-series.html" class="btn btn-secondary btn-lg">Take Mock Test</a>
+            </div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <h3>10k+</h3>
+                    <p>Students</p>
+                </div>
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>Hours Content</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Satisfaction</p>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="assets/images/hero-illustration.svg" alt="Chemistry Learning" onerror="this.src='https://placehold.co/600x400/e0f2fe/0984e3?text=Chemistry+Maker'">
+        </div>
+    </div>
+</section>
+
+<!-- Demo Notice -->
+<div style="background: #fef3c7; color: #92400e; text-align: center; padding: 10px; font-weight: 600;">
+    ⚠️ DEMO MODE: Static Version (No Backend)
+</div>
+
+<footer class="main-footer" style="margin-top: 50px;">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">CHEMISTRY MAKER</a>
+                <p>Empowering students to master chemistry with ease.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="courses.html">All Courses</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Chemistry Maker. Demo Version.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+    // Demo Auth Check
+    const user = localStorage.getItem('demo_user');
+    if (user) {
+        document.querySelectorAll('.guest-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.auth-only').forEach(el => el.style.display = 'block');
+    }
+</script>
+</body>
+</html>

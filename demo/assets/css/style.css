@@ -1,0 +1,542 @@
+/* public_html/assets/css/style.css */
+
+/* -------------------------------------------------------------------------- */
+/*                               variables & Reset                            */
+/* -------------------------------------------------------------------------- */
+:root {
+    /* Colors - Modern Indigo/Violet Palette */
+    --primary-hue: 250;
+    --primary: hsl(var(--primary-hue), 84%, 54%);
+    --primary-hover: hsl(var(--primary-hue), 84%, 44%);
+    --primary-light: hsl(var(--primary-hue), 84%, 95%);
+
+    --secondary: #00D2D3;
+    /* Teal accent */
+    --accent: #FF9F43;
+    /* Orange accent */
+
+    --dark: #2d3436;
+    --text-main: #2d3436;
+    --text-light: #636e72;
+    --white: #ffffff;
+    --light-bg: #f7f9fc;
+
+    /* Shadows & Glassmorphism */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+
+    /* Spacing */
+    --container-width: 1200px;
+    --header-height: 80px;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+}
+
+/* Global Transition for Theme Switching */
+body,
+.main-header,
+.footer,
+.card,
+.input,
+button,
+a {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] {
+    /* Premium Dark Mode Palette (Deep Gray/Blue Tint) */
+    --primary: hsl(var(--primary-hue), 90%, 65%);
+    --primary-light: #1e293b;
+    /* Slate-800 */
+
+    --bg-dark: #0f172a;
+    /* Slate-900 */
+    --bg-card: #1e293b;
+    /* Slate-800 */
+    --bg-input: #334155;
+    /* Slate-700 */
+
+    --text-main: #f1f5f9;
+    /* Slate-100 */
+    --text-light: #94a3b8;
+    /* Slate-400 */
+
+    /* Re-mapping core variables */
+    --light-bg: #0f172a;
+    --white: #1e1e1e;
+    /* Override white to be card bg */
+    --dark: #f1f5f9;
+    /* Invert dark text to light */
+
+    --bg-footer: #020617;
+    /* Very dark blue/black for footer */
+
+    --glass-bg: rgba(15, 23, 42, 0.85);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.5);
+
+    /* Specific Element Overrides */
+    border-color: #334155;
+}
+
+/* Dark Mode Specific Component Fixes */
+[data-theme="dark"] .course-card {
+    border: 1px solid #334155;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border-color: #475569;
+}
+
+[data-theme="dark"] .module-header {
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+    color: var(--text-main);
+}
+
+[data-theme="dark"] .module-header:hover {
+    background-color: #334155;
+}
+
+[data-theme="dark"] .content-item {
+    border-bottom: 1px solid #334155;
+    color: var(--text-light);
+}
+
+[data-theme="dark"] .content-item:hover {
+    background-color: #334155;
+    color: var(--text-main);
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-top: var(--header-height);
+    /* For fixed header */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Typography                                 */
+/* -------------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+}
+
+/* Fixed H tags to use var(--text-main) dynamic color instead of var(--dark) */
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Utils                                    */
+/* -------------------------------------------------------------------------- */
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-padding {
+    padding: 80px 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.gap-1 {
+    gap: 10px;
+}
+
+.gap-2 {
+    gap: 20px;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, hsl(var(--primary-hue), 90%, 65%) 100%);
+    color: #fff;
+    /* Always white text on primary btn */
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(108, 92, 231, 0.5);
+}
+
+.btn-secondary {
+    background: rgba(108, 92, 231, 0.1);
+    color: var(--primary);
+}
+
+.btn-secondary:hover {
+    background: rgba(108, 92, 231, 0.2);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Header                                   */
+/* -------------------------------------------------------------------------- */
+.main-header {
+    height: var(--header-height);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--glass-border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.main-header.scrolled {
+    height: 60px;
+    box-shadow: var(--shadow-md);
+    background: rgba(255, 255, 255, 0.95);
+    /* Light background for light mode */
+}
+
+[data-theme="dark"] .main-header.scrolled {
+    background: rgba(15, 23, 42, 0.95);
+    /* Dark background for dark mode */
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+.main-header .container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-link {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary);
+}
+
+/* Mobile Menu Trigger */
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   Footer                                   */
+/* -------------------------------------------------------------------------- */
+.main-footer {
+    background: var(--bg-footer, #2d3436);
+    /* Default to dark grey if var not set */
+    color: #b2bec3;
+    padding: 60px 0 20px;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.footer-links h4 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Page Specific Grids */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Animations                                 */
+/* -------------------------------------------------------------------------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-padding,
+.hero-content,
+.contact-grid,
+.course-card {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               Responsive                                   */
+/* -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 70px;
+        --container-width: 100%;
+    }
+
+    body {
+        font-size: 15px;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    /* Mobile Header */
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .menu-toggle {
+        display: block;
+        font-size: 1.6rem;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        width: 100%;
+        background: var(--light-bg);
+        flex-direction: column;
+        padding: 30px 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-150%);
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        gap: 20px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-menu.active {
+        transform: translateY(0);
+    }
+
+    .nav-link {
+        font-size: 1.1rem;
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .nav-link:active {
+        background: var(--light-bg);
+    }
+
+    /* Mobile Typography */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+    }
+
+    /* Mobile Forms & Interactives */
+    input,
+    textarea,
+    select {
+        font-size: 16px !important;
+        /* Prevent zoom on iOS */
+        padding: 14px !important;
+    }
+
+    .btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 20px;
+    }
+
+    /* Mobile Sticky CTA */
+    .mobile-sticky-cta {
+        display: block !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+        background: var(--white);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Add padding to body/footer to prevent overlap */
+    .main-footer {
+        padding-bottom: 80px;
+    }
+
+    /* Contact Page Specific */
+    .contact-grid {
+        grid-template-columns: 1fr !important;
+        gap: 30px;
+    }
+
+    .contact-grid>div:first-child {
+        text-align: center;
+        background: var(--white);
+        padding: 20px;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+    }
+}

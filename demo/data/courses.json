@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "title": "Organic Chemistry Masterclass",
+        "instructor": "Dr. Sharma",
+        "price": 499,
+        "original_price": 1999,
+        "rating": 4.8,
+        "students": 1200,
+        "thumbnail": "course-1.jpg",
+        "description": "Complete guide to Organic Chemistry for JEE/NEET aspirants.",
+        "category": "Organic"
+    },
+    {
+        "id": 2,
+        "title": "Physical Chemistry Zero to Hero",
+        "instructor": "Prof. Verma",
+        "price": 699,
+        "original_price": 2499,
+        "rating": 4.9,
+        "students": 850,
+        "thumbnail": "course-2.jpg",
+        "description": "Master thermodynamics, kinetics, and equilibrium concepts.",
+        "category": "Physical"
+    },
+    {
+        "id": 3,
+        "title": "Inorganic Chemistry Crash Course",
+        "instructor": "Dr. Gupta",
+        "price": 399,
+        "original_price": 999,
+        "rating": 4.5,
+        "students": 2000,
+        "thumbnail": "course-3.jpg",
+        "description": "Quick revision for Periodic Table and Chemical Bonding.",
+        "category": "Inorganic"
+    }
+]

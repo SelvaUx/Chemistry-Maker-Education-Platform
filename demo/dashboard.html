@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Chemistry Maker Demo</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body style="background: #f8fafc;">
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-flask"></i> Chemistry Maker</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="courses.html" class="nav-link">Courses</a></li>
+                    <li><a href="test-series.html" class="nav-link">Test Series</a></li>
+                    <li><a href="#" class="btn btn-primary" onclick="logout()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container section-padding">
+        <div style="margin-bottom: 30px;">
+            <h1>My Learning</h1>
+            <p>Welcome back, <span id="userName">Student</span>!</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Mock Enrolled Course -->
+            <div class="course-card">
+                <div class="course-thumb"
+                    style="height: 180px; background: #e0f2fe; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-play-circle fa-4x text-primary"></i>
+                </div>
+                <div class="course-content">
+                    <h3>Organic Chemistry Masterclass</h3>
+                    <div style="margin: 15px 0;">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span>Progress</span>
+                            <span>35%</span>
+                        </div>
+                        <div style="background: #eee; height: 6px; border-radius: 3px;">
+                            <div style="background: var(--primary); width: 35%; height: 100%; border-radius: 3px;">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;">Continue Learning</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth Check
+        const user = JSON.parse(localStorage.getItem('demo_user'));
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userName').textContent = user.name;
+        }
+
+        function logout() {
+            localStorage.removeItem('demo_user');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+</body>
+
+</html>
