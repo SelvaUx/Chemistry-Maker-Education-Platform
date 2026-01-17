@@ -13,43 +13,100 @@
 
     <div
         style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px;">
+
         <div style="text-align: center; margin-bottom: 30px;">
             <h2 style="font-size: 1.8rem; color: var(--text-main); margin-bottom: 10px;">Welcome Back</h2>
-            <p style="color: var(--text-light);">Login to continue learning</p>
+            <p style="color: var(--text-light);">Select your role to login</p>
+        </div>
+
+        <!-- Role Switcher -->
+        <div style="display: flex; background: #f1f5f9; padding: 5px; border-radius: 8px; margin-bottom: 25px;">
+            <button onclick="switchRole('student')" id="btn-student"
+                style="flex: 1; padding: 10px; border: none; border-radius: 6px; background: white; color: var(--primary); font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">Student</button>
+            <button onclick="switchRole('admin')" id="btn-admin"
+                style="flex: 1; padding: 10px; border: none; border-radius: 6px; background: transparent; color: #64748b; font-weight: 600; cursor: pointer; transition: all 0.2s;">Admin</button>
         </div>
 
         <form id="loginForm">
+            <input type="hidden" id="role" value="student">
+
             <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email Address</label>
-                <input type="email" value="student@example.com" class="form-input"
-                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;" readonly>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email / Username</label>
+                <input type="text" id="email" value="student@example.com" class="form-input"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f8fafc;"
+                    readonly>
             </div>
 
             <div style="margin-bottom: 30px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">Password</label>
-                <input type="password" value="password" class="form-input"
-                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;" readonly>
+                <input type="password" id="password" value="password" class="form-input"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f8fafc;"
+                    readonly>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Login (Demo)</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600;">Login as
+                Student (Demo)</button>
         </form>
 
-        <div style="margin-top: 20px; text-align: center; font-size: 0.9rem;">
-            <p>Don't have an account? <a href="#" style="color: var(--primary);">Sign up</a></p>
+        <div
+            style="margin-top: 20px; text-align: center; font-size: 0.85rem; color: #64748b; background: #f0fdf4; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+            <i class="fa-solid fa-check-circle text-success"></i> Credentials pre-filled for demo
         </div>
     </div>
 
     <script>
+        function switchRole(role) {
+            document.getElementById('role').value = role;
+            const btn = document.querySelector('button[type="submit"]');
+            const email = document.getElementById('email');
+            const pass = document.getElementById('password');
+            const btnStudent = document.getElementById('btn-student');
+            const btnAdmin = document.getElementById('btn-admin');
+
+            if (role === 'admin') {
+                email.value = 'admin';
+                pass.value = 'admin123';
+                btn.textContent = 'Login to Admin Panel (Demo)';
+                btn.style.background = '#2d3436';
+
+                btnAdmin.style.background = 'white';
+                btnAdmin.style.color = '#2d3436';
+                btnAdmin.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+
+                btnStudent.style.background = 'transparent';
+                btnStudent.style.color = '#64748b';
+                btnStudent.style.boxShadow = 'none';
+            } else {
+                email.value = 'student@example.com';
+                pass.value = 'password';
+                btn.textContent = 'Login as Student (Demo)';
+                btn.style.background = 'var(--primary)';
+
+                btnStudent.style.background = 'white';
+                btnStudent.style.color = 'var(--primary)';
+                btnStudent.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+
+                btnAdmin.style.background = 'transparent';
+                btnAdmin.style.color = '#64748b';
+                btnAdmin.style.boxShadow = 'none';
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            // Simulate Login
+            const role = document.getElementById('role').value;
             const btn = this.querySelector('button');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
 
             setTimeout(() => {
-                localStorage.setItem('demo_user', JSON.stringify({ name: 'Demo Student', email: 'student@example.com' }));
-                window.location.href = 'dashboard.html';
+                if (role === 'admin') {
+                    localStorage.setItem('demo_admin', 'true');
+                    window.location.href = 'admin/index.html';
+                } else {
+                    localStorage.setItem('demo_user', JSON.stringify({ name: 'Demo Student', email: 'student@example.com' }));
+                    window.location.href = 'dashboard.html';
+                }
             }, 1000);
         });
     </script>
